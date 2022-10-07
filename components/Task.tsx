@@ -1,18 +1,27 @@
 import React, { Dispatch, useState } from "react"
-import { TextInput, TouchableOpacity, View } from 'react-native'
+import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, TouchableOpacity, View } from 'react-native'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import { Ionicons } from '@expo/vector-icons'
-import { actions, Job, State } from "../store"
+import { actions, Job, State, ApiService } from "../store"
 
 export default function Task({ job, dispatch }: { job: Job, dispatch: Dispatch<any> }) {
   const handleCheckbox = (isChecked: boolean) => {
-    dispatch(actions.updateJob({ ...job, status: isChecked }))
+    ApiService.updateTask({ ...job, status: isChecked }).then(() => {
+      dispatch(actions.updateJob({ ...job, status: isChecked }))
+    })
   }
   const handleTitleChange = (value: string) => {
     dispatch(actions.updateJob({ ...job, title: value }))
   }
+  const handleChangeServer = () => {
+    ApiService.updateTask({ ...job, title: job.title }).then(() => {
+      dispatch(actions.updateJob({ ...job, title: job.title }))
+    })
+  }
   const handleRemove = () => {
-    dispatch(actions.deleteJob(job.id))
+    ApiService.deleteTask(job.id).then(() => {
+      dispatch(actions.deleteJob(job.id))
+    })
   }
   return (
     <View style={{
@@ -36,6 +45,7 @@ export default function Task({ job, dispatch }: { job: Job, dispatch: Dispatch<a
         }}
         value={job.title}
         onChangeText={handleTitleChange}
+        onBlur={handleChangeServer}
       />
       <TouchableOpacity onPress={handleRemove}>
         <View style={{

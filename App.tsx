@@ -2,21 +2,21 @@ import { StatusBar } from 'expo-status-bar';
 import { Keyboard, FlatList, KeyboardAvoidingView, SafeAreaView, Text, TouchableWithoutFeedback, View, Platform } from 'react-native';
 import Task from './components/Task';
 import TodoInput from './components/TodoInput';
-import StoreReducer, { ApiService, Job } from './store'
+import StoreReducer, { actions, ApiService, Job } from './store'
 import { initialState } from './store/StoreReducer';
 import { useEffect, useReducer } from 'react';
 
 export default function App() {
   const [state, dispatch] = useReducer(StoreReducer, initialState)
-  const { job, jobs } = state
+  const { jobs } = state
 
   const handleDissmissKeyboard = () => {
     Keyboard.dismiss();
   }
 
   useEffect(() => {
-    ApiService.getTasks().then((jobs) => {
-      dispatch({ type: 'SET_JOBS', payload: jobs })
+    ApiService.getTasks().then((jobs: Job[]) => {
+      dispatch(actions.setJobs(jobs))
     })
   }, [])
 
@@ -50,7 +50,7 @@ export default function App() {
               flex: 1,
             }}>
               <FlatList
-                data={state.jobs}
+                data={jobs}
                 renderItem={({ item }: { item: Job }) => <Task job={item} dispatch={dispatch} />}
                 keyExtractor={(item: Job, index: number) => index.toString()}
                 showsVerticalScrollIndicator={false}

@@ -1,37 +1,39 @@
 import { Job } from "./StoreReducer"
 
-const getTasks = () => {
-  return fetch('/api/tasks')
-    .then(res => res.json())
+const apiPath = 'https://633fa892e44b83bc73bea325.mockapi.io/api/v1'
+
+const getTasks = async (): Promise<Job[]> => {
+  const res = await fetch(`${apiPath}/tasks`)
+  return await res.json()
 }
 
-const createTask = (task: Job) => {
-  return fetch('/api/tasks', {
+const createTask = async (task: Job) => {
+  const res = await fetch(`${apiPath}/tasks`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(task)
   })
-    .then(res => res.json())
+  return await res.json()
 }
 
-const updateTask = (task: Job) => {
-  return fetch(`/api/tasks/${task.id}`, {
+const updateTask = async (task: Job) => {
+  const res = await fetch(`${apiPath}/tasks/${task.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(task)
   })
-    .then(res => res.json())
+  return await res.json()
 }
 
-const deleteTask = (taskId: number) => {
-  return fetch(`/api/tasks/${taskId}`, {
+const deleteTask = async (taskId: number) => {
+  const res = await fetch(`${apiPath}/tasks/${taskId}`, {
     method: 'DELETE'
   })
-    .then(res => res.json())
+  return await res.json()
 }
 
 export { getTasks, createTask, updateTask, deleteTask }

@@ -1,7 +1,7 @@
 import React, { Dispatch, useReducer, useRef } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import { State, actions, Job } from '../store'
+import { State, actions, Job, ApiService } from '../store'
 
 export default function TodoInput({ state, dispatch }: { state: State, dispatch: Dispatch<any> }) {
   const handleTextChange = (value: string) => {
@@ -13,8 +13,10 @@ export default function TodoInput({ state, dispatch }: { state: State, dispatch:
       title: state.job,
       status: false
     }
-    dispatch(actions.addJob(newJob))
-    dispatch(actions.setJob(''))
+    ApiService.createTask(newJob).then(() => {
+      dispatch(actions.addJob(newJob))
+      dispatch(actions.setJob(''))
+    })
   }
   return (
     <View style={{
